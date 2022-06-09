@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "869722002739",
+    "project_id": "mychatapp-1dc25",
+    "storage_bucket": "mychatapp-1dc25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869722002739:android:4bb65d4ab167c784035a46",
+        "android_client_info": {
+          "package_name": "hcmute.vominhtri.mysimplechatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "869722002739-oijqdjqcicukc1jjgrjntrl0so44g30i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBem68F2ds1d6JMXkwd6q5wjmcLZc4brY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869722002739-oijqdjqcicukc1jjgrjntrl0so44g30i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
