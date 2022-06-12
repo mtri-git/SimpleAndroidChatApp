@@ -5,11 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/img_avatar_item"
+        android:id="@+id/img_avatar_recent"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"
         android:background="@drawable/background_image"
-        android:backgroundTint="@null"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -17,9 +16,9 @@
         android:id="@+id/view_supporter"
         android:layout_width="1dp"
         android:layout_height="1dp"
-        app:layout_constraintBottom_toBottomOf="@+id/img_avatar_item"
-        app:layout_constraintStart_toEndOf="@+id/img_avatar_item"
-        app:layout_constraintTop_toTopOf="@+id/img_avatar_item"/>
+        app:layout_constraintBottom_toBottomOf="@+id/img_avatar_recent"
+        app:layout_constraintStart_toEndOf="@+id/img_avatar_recent"
+        app:layout_constraintTop_toTopOf="@+id/img_avatar_recent"/>
 
     <TextView
         android:id="@+id/tv_name_item"
@@ -33,7 +32,7 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/view_supporter"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/img_avatar_item"/>
+        app:layout_constraintStart_toEndOf="@+id/img_avatar_recent"/>
 
     <TextView
         android:id="@+id/tv_recent_message"
@@ -47,7 +46,7 @@
         android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/view_supporter"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/img_avatar_item"/>
+        app:layout_constraintStart_toEndOf="@+id/img_avatar_recent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

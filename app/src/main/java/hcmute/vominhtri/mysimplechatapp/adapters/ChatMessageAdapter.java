@@ -1,6 +1,7 @@
 package hcmute.vominhtri.mysimplechatapp.adapters;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -71,7 +72,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        if(chatMessageList.get(position).getSenderId().equals(senderId))
+        if(chatMessageList.get(position).senderId.equals(senderId))
         {
             return VIEW_TYPE_SENT;
         } else {
@@ -90,8 +91,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         void setData(ChatMessage chatMessage)
         {
-            binding.tvMessage.setText(chatMessage.getMessage());
-            binding.tvDateMessage.setText(chatMessage.getDatetime());
+            binding.tvMessage.setText(chatMessage.message);
+            binding.tvDateMessage.setText(chatMessage.datetime);
 
         }
     }
@@ -106,9 +107,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         void setData(ChatMessage chatMessage, Bitmap avatar)
         {
-            binding.tvMessageReceived.setText(chatMessage.getMessage());
-            binding.tvDateMessage.setText(chatMessage.getDatetime());
-            binding.imgProfile.setImageBitmap(avatar);
+            binding.tvMessageReceived.setText(chatMessage.message);
+            binding.tvDateMessage.setText(chatMessage.message);
+            try {
+                binding.imgProfile.setImageBitmap(avatar);
+            }
+            catch (Exception ex)
+            {
+                Log.e("AAA", "Lỗi hình ảnh ở ChatAdaoter");
+            }
+
         }
     }
 }

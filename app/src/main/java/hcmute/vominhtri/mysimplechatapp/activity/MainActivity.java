@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,14 +18,13 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import hcmute.vominhtri.mysimplechatapp.adapters.RecentConservationAdapter;
+import hcmute.vominhtri.mysimplechatapp.adapters.ConservationAdapter;
 import hcmute.vominhtri.mysimplechatapp.databinding.ActivityMainBinding;
 import hcmute.vominhtri.mysimplechatapp.listeners.ConversionListener;
 import hcmute.vominhtri.mysimplechatapp.models.ChatMessage;
@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
 
     private ActivityMainBinding binding;
     private PreferenceManager preferenceManager;
-    private List<ChatMessage> recentConversions;
-    private RecentConservationAdapter recentConservationAdapter;
+    private List<ChatMessage> conversions;
+    private ConservationAdapter conservationAdapter;
     private FirebaseFirestore database;
 
     @Override
@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
         preferenceManager = new PreferenceManager(getApplicationContext());
         init();
         loadUserData();
-        getToken();
         setListener();
         listenConversions();
     }
@@ -56,9 +55,9 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
 
     private void init()
     {
-        recentConversions = new ArrayList<>();
-        recentConservationAdapter = new RecentConservationAdapter(recentConversions, this);
-        binding.rvRecentConversion.setAdapter(recentConservationAdapter);
+        conversions = new ArrayList<>();
+        conservationAdapter = new ConservationAdapter(conversions, this);
+        binding.rvRecentConversion.setAdapter(conservationAdapter);
         database = FirebaseFirestore.getInstance();
     }
 
@@ -76,12 +75,6 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
             startActivity(new Intent(MainActivity.this, UserActivity.class)));
     }
 
-
-    private void getToken()
-    {
-        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
-//        Log.e("FCM", )
-    }
 
     private void updateToken(String token)
     {
@@ -139,41 +132,41 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
                     String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                     String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                     ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.setReceiverId(receiverId);
-                    chatMessage.setSenderId(senderId);
+                    chatMessage.receiverId = receiverId;
+                    chatMessage.senderId = senderId;
                     if(preferenceManager.getString(Constants.KEY_USER_ID).equals(senderId))
                     {
-                        chatMessage.setConversionImage(documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE));
-                        chatMessage.setConversionName(documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME));
-                        chatMessage.setReceiverId(documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID));
+                        chatMessage.conversionImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
+                        chatMessage.conversionName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
+                        chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                     }
                     else {
-                        chatMessage.setConversionImage(documentChange.getDocument().getString(Constants.KEY_SENDER_IMAGE));
-                        chatMessage.setConversionName(documentChange.getDocument().getString(Constants.KEY_SENDER_NAME));
-                        chatMessage.setReceiverId(documentChange.getDocument().getString(Constants.KEY_SENDER_ID));
+                        chatMessage.conversionImage = documentChange.getDocument().getString(Constants.KEY_SENDER_IMAGE);
+                        chatMessage.conversionName = documentChange.getDocument().getString(Constants.KEY_SENDER_NAME);
+                        chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                     }
-                    chatMessage.setMessage(documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE));
-                    chatMessage.setDatetimeObject(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
-                    recentConversions.add(chatMessage);
+                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
+                    chatMessage.datetimeObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    conversions.add(chatMessage);
                 }
                 else if(documentChange.getType() == DocumentChange.Type.MODIFIED)
                 {
-                    for(int i =0; i < recentConversions.size(); i++)
+                    for(int i = 0; i < conversions.size(); i++)
                     {
                         String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                         String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                        if(recentConversions.get(i).getSenderId().equals(senderId) &&
-                                recentConversions.get(i).getReceiverId().equals(receiverId))
+                        if(conversions.get(i).senderId.equals(senderId) &&
+                                conversions.get(i).receiverId.equals(receiverId))
                         {
-                            recentConversions.get(i).setMessage(documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE));
-                            recentConversions.get(i).setDatetimeObject(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
+                            conversions.get(i).message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
+                            conversions.get(i).datetimeObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
                             break;
                         }
                     }
                 }
             }
-            Collections.sort(recentConversions, (obj1, obj2) -> obj1.getDatetimeObject().compareTo(obj2.getDatetimeObject()));
-            recentConservationAdapter.notifyDataSetChanged();
+            Collections.sort(conversions, (obj1, obj2) -> obj2.datetimeObject.compareTo(obj1.datetimeObject));
+            conservationAdapter.notifyDataSetChanged();
             binding.rvRecentConversion.smoothScrollToPosition(0);
             binding.rvRecentConversion.setVisibility(View.VISIBLE);
             binding.prBar.setVisibility(View.GONE);
@@ -184,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
     public void onConversionClicked(User user) {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra(Constants.KEY_USER, user);
+        Log.e("AAA", user.toString());
         startActivity(intent);
     }
 }

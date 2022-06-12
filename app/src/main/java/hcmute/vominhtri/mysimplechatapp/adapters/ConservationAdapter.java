@@ -3,6 +3,7 @@ package hcmute.vominhtri.mysimplechatapp.adapters;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -16,12 +17,12 @@ import hcmute.vominhtri.mysimplechatapp.listeners.ConversionListener;
 import hcmute.vominhtri.mysimplechatapp.models.ChatMessage;
 import hcmute.vominhtri.mysimplechatapp.models.User;
 
-public class RecentConservationAdapter extends RecyclerView.Adapter<RecentConservationAdapter.ConversionViewHolder>{
+public class ConservationAdapter extends RecyclerView.Adapter<ConservationAdapter.ConversionViewHolder>{
 
     private final List<ChatMessage> chatMessages;
     private final ConversionListener conversionListener;
 
-    public RecentConservationAdapter(List<ChatMessage> chatMessages, ConversionListener conversionListener) {
+    public ConservationAdapter(List<ChatMessage> chatMessages, ConversionListener conversionListener) {
         this.chatMessages = chatMessages;
         this.conversionListener = conversionListener;
     }
@@ -41,6 +42,7 @@ public class RecentConservationAdapter extends RecyclerView.Adapter<RecentConser
     @Override
     public void onBindViewHolder(@NonNull ConversionViewHolder holder, int position) {
         holder.setData(chatMessages.get(position));
+        Log.e("AAA", chatMessages.get(position).toString());
     }
 
     @Override
@@ -48,6 +50,8 @@ public class RecentConservationAdapter extends RecyclerView.Adapter<RecentConser
         return chatMessages.size();
     }
 
+
+    // View holder
     class ConversionViewHolder extends RecyclerView.ViewHolder{
         ItemContainerUserRecentConversionBinding binding;
 
@@ -56,17 +60,26 @@ public class RecentConservationAdapter extends RecyclerView.Adapter<RecentConser
             this.binding = binding;
         }
 
+
         void setData(ChatMessage chatMessage)
         {
-            binding.imgAvatarItem.setImageBitmap(getConversionImage(chatMessage.getConversionImage()));
-            binding.tvNameItem.setText(chatMessage.getConversionName());
-            binding.tvRecentMessage.setText(chatMessage.getMessage());
+            try {
+                binding.imgAvatarRecent.setImageBitmap(getConversionImage(chatMessage.conversionImage));
+            }
+            catch (Exception e)
+            {
+                Log.e("AAA", "Không có ảnh để load");
+            };
+
+            binding.tvNameItem.setText(chatMessage.conversionName);
+            binding.tvRecentMessage.setText(chatMessage.message);
             //add
             binding.getRoot().setOnClickListener(view -> {
                 User user = new User();
-                user.setId(chatMessage.getConversionId());
-                user.setName(chatMessage.getConversionName());
-                user.setImage(chatMessage.getConversionImage());
+                user.id = chatMessage.receiverId;
+                Log.e("AAA", chatMessage.conversionName);
+                user.name = chatMessage.conversionName;
+                user.image = chatMessage.conversionImage;
                 conversionListener.onConversionClicked(user);
             });
         }
